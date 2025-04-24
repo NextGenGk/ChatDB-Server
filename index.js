@@ -1,3 +1,4 @@
+
 // index.js - Main application server
 require("dotenv").config();
 const express = require("express");
@@ -7,11 +8,7 @@ const openrouter = require("./openrouter");
 
 // Initialize Express app
 const app = express();
-app.use(cors({
-  // Allow all origins for now
-  origin: "*",
-  credentials: true
-}));
+app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
@@ -21,24 +18,13 @@ db.connect().catch(err => {
   process.exit(1);
 });
 
-// Public Routes
 // Root Endpoint
 app.get("/", (req, res) => {
   res.send("✅ MCP PostgreSQL Server is running...");
 });
 
-// Authentication check middleware for protected routes
-const requireAuth = ClerkExpressRequireAuth({
-  // Optional: Customize authentication error handling
-  onError: (err, req, res) => {
-    console.error("Authentication error:", err);
-    res.status(401).json({ error: "Unauthorized access" });
-  }
-});
-
-// Protected Routes (require authentication)
 // Fetch all users
-app.get("/data", requireAuth, async (req, res) => {
+app.get("/data", async (req, res) => {
   try {
     const result = await db.client.query("SELECT * FROM users;");
     res.json(result.rows);
@@ -49,7 +35,7 @@ app.get("/data", requireAuth, async (req, res) => {
 });
 
 // Add a new user manually
-app.post("/add-user", requireAuth, async (req, res) => {
+app.post("/add-user", async (req, res) => {
   const { name, email, age } = req.body;
   if (!name || !email || !age) {
     return res.status(400).json({ error: "All fields are required" });
@@ -74,7 +60,7 @@ app.post("/add-user", requireAuth, async (req, res) => {
 });
 
 // Create a new database
-app.post("/create-database", requireAuth, async (req, res) => {
+app.post("/create-database", async (req, res) => {
   const { dbName, tables } = req.body;
   
   if (!dbName) {
@@ -105,7 +91,7 @@ app.post("/create-database", requireAuth, async (req, res) => {
 });
 
 // 🧠 Enhanced Natural Language to SQL via OpenRouter
-app.post("/natural-language", requireAuth, async (req, res) => {
+app.post("/natural-language", async (req, res) => {
   const { command } = req.body;
 
   if (!command) {
@@ -183,7 +169,7 @@ app.post("/natural-language", requireAuth, async (req, res) => {
 });
 
 // Helper endpoint to extract table creation statements from CREATE DATABASE command
-app.post("/extract-create-tables", requireAuth, async (req, res) => {
+app.post("/extract-create-tables", async (req, res) => {
   const { sql } = req.body;
   
   const result = db.extractTableStatements(sql);
