@@ -4,7 +4,6 @@ const express = require("express");
 const cors = require("cors");
 const db = require("./db");
 const openrouter = require("./openrouter");
-const { ClerkExpressRequireAuth } = require('@clerk/clerk-sdk-node');
 
 // Initialize Express app
 const app = express();

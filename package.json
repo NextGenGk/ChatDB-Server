@@ -4,8 +4,13 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+<<<<<<< HEAD
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "vite build"
+=======
+    "start": "node index.js",  // Add this line for the start command
+    "test": "echo \"Error: no test specified\" && exit 1"
+>>>>>>> parent of f8ba628 (ssl update)
   },
   "keywords": [],
   "author": "",
